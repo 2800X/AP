@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Training Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100">
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <svg class="w-10 h-10 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <h1 class="text-4xl md:text-5xl font-bold text-cyan-400">AP Training Log</h1>
+            </div>
+            <p class="text-slate-400 text-lg ml-13">Subconscious Upward Movement Practice</p>
+        </div>
+
+        <div id="stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6" style="display: none;"></div>
+
+        <div id="buttonContainer" class="flex flex-col sm:flex-row gap-3 mb-6">
+            <button onclick="showAddForm()" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                New Entry
+            </button>
+            <button onclick="downloadData()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                Download Backup
+            </button>
+            <label class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                </svg>
+                Upload Backup
+                <input type="file" accept=".json" onchange="uploadData(event)" class="hidden">
+            </label>
+        </div>
+
+        <div id="formContainer" class="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6" style="display: none;">
+            <h2 id="formTitle" class="text-xl font-bold text-cyan-400 mb-4">New Entry</h2>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2">Date</label>
+                        <input type="date" id="date" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2">Intent Set Before Sleep?</label>
+                        <select id="intentSet" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2">Practiced SUM?</label>
+                        <input type="text" id="practicedSUM" placeholder="5 mins" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2">Focused on AP (How long?)</label>
+                        <input type="text" id="focusedDuration" placeholder="20 mins" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2">Glass of Water?</label>
+                        <select id="glassOfWater" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                            <option value="yes">yes</option>
+                            <option value="no">no</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2"># of Awakenings Noticed</label>
+                        <input type="number" id="awakenings" placeholder="0" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-sm mb-2">Moved on Awakening?</label>
+                        <select id="movedOnAwakening" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
+                            <option value="yes">yes</option>
+                            <option value="no">no</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-300 text-sm mb-2">Notes</label>
+                    <textarea id="notes" placeholder="Any observations or experiences..." rows="3" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2"></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="saveEntry()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Save
+                    </button>
+                    <button onclick="cancelForm()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-lg overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-slate-700 text-slate-300">
+                    <tr>
+                        <th class="text-left p-3 font-semibold">Date</th>
+                        <th class="text-left p-3 font-semibold">Intent?</th>
+                        <th class="text-left p-3 font-semibold">SUM</th>
+                        <th class="text-left p-3 font-semibold">Focus Time</th>
+                        <th class="text-left p-3 font-semibold">Water</th>
+                        <th class="text-left p-3 font-semibold">Wake-ups</th>
+                        <th class="text-left p-3 font-semibold">Moved?</th>
+                        <th class="text-left p-3 font-semibold">Notes</th>
+                        <th class="text-right p-3 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="entriesTable" class="divide-y divide-slate-700">
+                </tbody>
+            </table>
+            <div id="emptyState" class="text-center text-slate-500 py-12">
+                <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                <p class="text-lg">No entries yet. Start logging your practice!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let entries = [];
+        let editingId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('date').value = new Date().toISOString().split('T')[0];
+            loadEntries();
+        });
+
+        function loadEntries() {
+            const stored = localStorage.getItem('apEntries');
+            if (stored) {
+                entries = JSON.parse(stored);
+                entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            renderEntries();
+            renderStats();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('apEntries', JSON.stringify(entries));
+        }
+
+        function showAddForm() {
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('buttonContainer').style.display = 'none';
+            document.getElementById('formTitle').textContent = 'New Entry';
+            editingId = null;
+            resetForm();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelForm() {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('buttonContainer').style.display = 'flex';
+            editingId = null;
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('intentSet').value = 'Yes';
+            document.getElementById('practicedSUM').value = '';
+            document.getElementById('focusedDuration').value = '';
+            document.getElementById('glassOfWater').value = 'yes';
+            document.getElementById('awakenings').value = '';
+            document.getElementById('movedOnAwakening').value = 'yes';
+            document.getElementById('notes').value = '';
+        }
+
+        function saveEntry() {
+            const entry = {
+                id: editingId || `entry_${Date.now()}`,
+                date: document.getElementById('date').value,
+                intentSet: document.getElementById('intentSet').value,
+                practicedSUM: document.getElementById('practicedSUM').value,
+                focusedDuration: document.getElementById('focusedDuration').value,
+                glassOfWater: document.getElementById('glassOfWater').value,
+                awakenings: document.getElementById('awakenings').value,
+                movedOnAwakening: document.getElementById('movedOnAwakening').value,
+                notes: document.getElementById('notes').value
+            };
+
+            if (editingId) {
+                const index = entries.findIndex(e => e.id === editingId);
+                entries[index] = entry;
+            } else {
+                entries.push(entry);
+            }
+
+            saveToStorage();
+            loadEntries();
+            cancelForm();
+        }
+
+        function editEntry(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+
+            editingId = id;
+            document.getElementById('date').value = entry.date;
+            document.getElementById('intentSet').value = entry.intentSet;
+            document.getElementById('practicedSUM').value = entry.practicedSUM;
+            document.getElementById('focusedDuration').value = entry.focusedDuration;
+            document.getElementById('glassOfWater').value = entry.glassOfWater;
+            document.getElementById('awakenings').value = entry.awakenings;
+            document.getElementById('movedOnAwakening').value = entry.movedOnAwakening;
+            document.getElementById('notes').value = entry.notes;
+
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('buttonContainer').style.display = 'none';
+            document.getElementById('formTitle').textContent = 'Edit Entry';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteEntry(id) {
+            if (!confirm('Delete this entry?')) return;
+            entries = entries.filter(e => e.id !== id);
+            saveToStorage();
+            loadEntries();
+        }
+
+        function renderEntries() {
+            const tbody = document.getElementById('entriesTable');
+            const emptyState = document.getElementById('emptyState');
+
+            if (entries.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tbody.innerHTML = entries.map(entry => `
+                <tr class="hover:bg-slate-750">
+                    <td class="p-3 text-cyan-400 font-medium whitespace-nowrap">
+                        ${entry.date.split('-')[1]}/${entry.date.split('-')[2]}/${entry.date.split('-')[0]}
+                    </td>
+                    <td class="p-3">${entry.intentSet}</td>
+                    <td class="p-3 text-purple-400">${entry.practicedSUM || '-'}</td>
+                    <td class="p-3 text-blue-400">${entry.focusedDuration || '-'}</td>
+                    <td class="p-3">${entry.glassOfWater}</td>
+                    <td class="p-3 text-yellow-400">${entry.awakenings || '-'}</td>
+                    <td class="p-3">${entry.movedOnAwakening}</td>
+                    <td class="p-3 text-slate-400 max-w-xs truncate">${entry.notes || '-'}</td>
+                    <td class="p-3">
+                        <div class="flex gap-2 justify-end whitespace-nowrap">
+                            <button onclick="editEntry('${entry.id}')" class="text-blue-400 hover:text-blue-300 p-1 hover:bg-slate-700 rounded" title="Edit entry">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="deleteEntry('${entry.id}')" class="text-red-400 hover:text-red-300 p-1 hover:bg-slate-700 rounded" title="Delete entry">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderStats() {
+            const statsDiv = document.getElementById('stats');
+            if (entries.length === 0) {
+                statsDiv.style.display = 'none';
+                return;
+            }
+
+            statsDiv.style.display = 'grid';
+
+            const intentSetYes = entries.filter(e => e.intentSet === 'Yes').length;
+            const avgSUM = entries.filter(e => e.practicedSUM).reduce((sum, e) => {
+                const mins = parseInt(e.practicedSUM.replace(/\D/g, '')) || 0;
+                return sum + mins;
+            }, 0) / entries.filter(e => e.practicedSUM).length || 0;
+            const avgFocused = entries.filter(e => e.focusedDuration).reduce((sum, e) => {
+                const mins = parseInt(e.focusedDuration.replace(/\D/g, '')) || 0;
+                return sum + mins;
+            }, 0) / entries.filter(e => e.focusedDuration).length || 0;
+            const avgAwakenings = entries.filter(e => e.awakenings).reduce((sum, e) => sum + parseInt(e.awakenings || 0), 0) / entries.filter(e => e.awakenings).length || 0;
+            const movedNo = entries.filter(e => e.movedOnAwakening === 'no').length;
+
+            statsDiv.innerHTML = `
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <div class="text-2xl font-bold text-cyan-400">${entries.length}</div>
+                    <div class="text-xs text-slate-400">Total Sessions</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <div class="text-2xl font-bold text-green-400">${Math.round((intentSetYes / entries.length) * 100)}%</div>
+                    <div class="text-xs text-slate-400">Intent Set</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <div class="text-2xl font-bold text-purple-400">${avgSUM.toFixed(0)}m</div>
+                    <div class="text-xs text-slate-400">Avg SUM</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <div class="text-2xl font-bold text-blue-400">${avgFocused.toFixed(0)}m</div>
+                    <div class="text-xs text-slate-400">Avg Focus</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <div class="text-2xl font-bold text-yellow-400">${avgAwakenings.toFixed(1)}</div>
+                    <div class="text-xs text-slate-400">Avg Wake-ups</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <div class="text-2xl font-bold text-orange-400">${movedNo}</div>
+                    <div class="text-xs text-slate-400">Still on Wake</div>
+                </div>
+            `;
+        }
+
+        function downloadData() {
+            const dataStr = JSON.stringify(entries, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `ap-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function uploadData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedEntries = JSON.parse(event.target.result);
+                    
+                    if (!Array.isArray(importedEntries)) {
+                        alert('Invalid file format');
+                        return;
+                    }
+
+                    entries = importedEntries;
+                    saveToStorage();
+                    loadEntries();
+                    alert(`Successfully imported ${importedEntries.length} entries!`);
+                } catch (error) {
+                    console.error('Error importing data:', error);
+                    alert('Failed to import data. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        }
+    </script>
+</body>
+</html>
