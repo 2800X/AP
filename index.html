@@ -10,10 +10,16 @@
             margin: 0;
             font-family: system-ui, -apple-system, sans-serif;
         }
+        .toggle-btn {
+            transition: all 0.2s;
+        }
+        .toggle-btn.active {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="min-h-screen bg-slate-900 text-slate-100">
-    <div class="max-w-7xl mx-auto p-4 md:p-8">
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
         <div class="mb-8">
             <div class="flex items-center gap-3 mb-2">
                 <svg class="w-10 h-10 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,73 +43,115 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
-                Download Backup
+                Download
             </button>
             <label class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                 </svg>
-                Upload Backup
+                Upload
                 <input type="file" accept=".json" onchange="uploadData(event)" class="hidden">
             </label>
         </div>
 
         <div id="formContainer" class="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6" style="display: none;">
-            <h2 id="formTitle" class="text-xl font-bold text-cyan-400 mb-4">New Entry</h2>
+            <h2 id="formTitle" class="text-2xl font-bold text-cyan-400 mb-6">New Entry</h2>
             
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2">Date</label>
-                        <input type="date" id="date" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2">Intent Set Before Sleep?</label>
-                        <select id="intentSet" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2">Practiced SUM?</label>
-                        <input type="text" id="practicedSUM" placeholder="5 mins" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2">Focused on AP (How long?)</label>
-                        <input type="text" id="focusedDuration" placeholder="20 mins" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2">Glass of Water?</label>
-                        <select id="glassOfWater" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                            <option value="yes">yes</option>
-                            <option value="no">no</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2"># of Awakenings Noticed</label>
-                        <input type="number" id="awakenings" placeholder="0" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 text-sm mb-2">Moved on Awakening?</label>
-                        <select id="movedOnAwakening" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2">
-                            <option value="yes">yes</option>
-                            <option value="no">no</option>
-                        </select>
+            <div class="space-y-6">
+                <div class="bg-slate-750 p-4 rounded-lg">
+                    <label class="block text-slate-300 font-semibold mb-3">Date</label>
+                    <input type="date" id="date" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3 text-lg">
+                </div>
+
+                <div class="bg-slate-750 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4">Before Sleep</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-slate-300 mb-2">Focused on AP (How long?)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="focusedDuration" placeholder="1" min="0" class="flex-1 bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3">
+                                <select id="focusedDurationUnit" class="bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3">
+                                    <option value="mins">mins</option>
+                                    <option value="hours">hours</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-2">Practiced SUM?</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="practicedSUM" placeholder="5" min="0" class="flex-1 bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3">
+                                <select id="practicedSUMUnit" class="bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3">
+                                    <option value="mins">mins</option>
+                                    <option value="hours">hours</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-2">Intent Set Before Sleep?</label>
+                            <div class="flex gap-3">
+                                <button type="button" onclick="setToggle('intentSet', 'Yes')" id="intentSet-Yes" class="toggle-btn flex-1 bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all">
+                                    Yes
+                                </button>
+                                <button type="button" onclick="setToggle('intentSet', 'No')" id="intentSet-No" class="toggle-btn flex-1 bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all">
+                                    No
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-2">Glass of Water?</label>
+                            <div class="flex gap-3">
+                                <button type="button" onclick="setToggle('glassOfWater', 'yes')" id="glassOfWater-yes" class="toggle-btn flex-1 bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all">
+                                    Yes
+                                </button>
+                                <button type="button" onclick="setToggle('glassOfWater', 'no')" id="glassOfWater-no" class="toggle-btn flex-1 bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all">
+                                    No
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-slate-300 text-sm mb-2">Notes</label>
-                    <textarea id="notes" placeholder="Any observations or experiences..." rows="3" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded px-3 py-2"></textarea>
+
+                <div class="bg-slate-750 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-4">During Sleep</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-slate-300 mb-2"># of Awakenings Noticed</label>
+                            <input type="number" id="awakenings" placeholder="0" min="0" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3 text-lg">
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-2">Moved on Awakening?</label>
+                            <div class="flex gap-3">
+                                <button type="button" onclick="setToggle('movedOnAwakening', 'yes')" id="movedOnAwakening-yes" class="toggle-btn flex-1 bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all">
+                                    Yes
+                                </button>
+                                <button type="button" onclick="setToggle('movedOnAwakening', 'no')" id="movedOnAwakening-no" class="toggle-btn flex-1 bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all">
+                                    No
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="saveEntry()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                <div class="bg-slate-750 p-4 rounded-lg">
+                    <label class="block text-slate-300 font-semibold mb-3">Notes</label>
+                    <textarea id="notes" placeholder="Any observations or experiences..." rows="4" class="w-full bg-slate-700 text-slate-100 border border-slate-600 rounded-lg px-4 py-3"></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="saveEntry()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 text-lg shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        Save
+                        Save Entry
                     </button>
-                    <button onclick="cancelForm()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="cancelForm()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 text-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                         Cancel
@@ -142,18 +190,51 @@
     <script>
         let entries = [];
         let editingId = null;
+        let formState = {
+            intentSet: 'Yes',
+            glassOfWater: 'yes',
+            movedOnAwakening: 'yes'
+        };
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('date').value = new Date().toISOString().split('T')[0];
             loadEntries();
+            updateToggleButtons();
         });
+
+        function setToggle(field, value) {
+            formState[field] = value;
+            updateToggleButtons();
+        }
+
+        function updateToggleButtons() {
+            const fields = ['intentSet', 'glassOfWater', 'movedOnAwakening'];
+            const options = ['Yes', 'No', 'yes', 'no'];
+            
+            fields.forEach(function(field) {
+                const value = formState[field];
+                options.forEach(function(option) {
+                    const btn = document.getElementById(field + '-' + option);
+                    if (btn) {
+                        if (option === value) {
+                            btn.classList.add('active', 'bg-cyan-600', 'border-cyan-500');
+                            btn.classList.remove('bg-slate-700', 'border-slate-600');
+                        } else {
+                            btn.classList.remove('active', 'bg-cyan-600', 'border-cyan-500');
+                            btn.classList.add('bg-slate-700', 'border-slate-600');
+                        }
+                    }
+                });
+            });
+        }
 
         function loadEntries() {
             const stored = localStorage.getItem('apEntries');
             if (stored) {
                 entries = JSON.parse(stored);
-                entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+                entries.sort(function(a, b) {
+                    return new Date(b.date) - new Date(a.date);
+                });
             }
             renderEntries();
             renderStats();
@@ -181,30 +262,37 @@
 
         function resetForm() {
             document.getElementById('date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('intentSet').value = 'Yes';
-            document.getElementById('practicedSUM').value = '';
+            formState = {
+                intentSet: 'Yes',
+                glassOfWater: 'yes',
+                movedOnAwakening: 'yes'
+            };
             document.getElementById('focusedDuration').value = '';
-            document.getElementById('glassOfWater').value = 'yes';
+            document.getElementById('focusedDurationUnit').value = 'mins';
+            document.getElementById('practicedSUM').value = '';
+            document.getElementById('practicedSUMUnit').value = 'mins';
             document.getElementById('awakenings').value = '';
-            document.getElementById('movedOnAwakening').value = 'yes';
             document.getElementById('notes').value = '';
+            updateToggleButtons();
         }
 
         function saveEntry() {
             const entry = {
-                id: editingId || `entry_${Date.now()}`,
+                id: editingId || 'entry_' + Date.now(),
                 date: document.getElementById('date').value,
-                intentSet: document.getElementById('intentSet').value,
-                practicedSUM: document.getElementById('practicedSUM').value,
                 focusedDuration: document.getElementById('focusedDuration').value,
-                glassOfWater: document.getElementById('glassOfWater').value,
+                focusedDurationUnit: document.getElementById('focusedDurationUnit').value,
+                practicedSUM: document.getElementById('practicedSUM').value,
+                practicedSUMUnit: document.getElementById('practicedSUMUnit').value,
+                intentSet: formState.intentSet,
+                glassOfWater: formState.glassOfWater,
                 awakenings: document.getElementById('awakenings').value,
-                movedOnAwakening: document.getElementById('movedOnAwakening').value,
+                movedOnAwakening: formState.movedOnAwakening,
                 notes: document.getElementById('notes').value
             };
 
             if (editingId) {
-                const index = entries.findIndex(e => e.id === editingId);
+                const index = entries.findIndex(function(e) { return e.id === editingId; });
                 entries[index] = entry;
             } else {
                 entries.push(entry);
@@ -216,18 +304,22 @@
         }
 
         function editEntry(id) {
-            const entry = entries.find(e => e.id === id);
+            const entry = entries.find(function(e) { return e.id === id; });
             if (!entry) return;
 
             editingId = id;
             document.getElementById('date').value = entry.date;
-            document.getElementById('intentSet').value = entry.intentSet;
-            document.getElementById('practicedSUM').value = entry.practicedSUM;
-            document.getElementById('focusedDuration').value = entry.focusedDuration;
-            document.getElementById('glassOfWater').value = entry.glassOfWater;
+            document.getElementById('focusedDuration').value = entry.focusedDuration || '';
+            document.getElementById('focusedDurationUnit').value = entry.focusedDurationUnit || 'mins';
+            document.getElementById('practicedSUM').value = entry.practicedSUM || '';
+            document.getElementById('practicedSUMUnit').value = entry.practicedSUMUnit || 'mins';
+            formState.intentSet = entry.intentSet;
+            formState.glassOfWater = entry.glassOfWater;
             document.getElementById('awakenings').value = entry.awakenings;
-            document.getElementById('movedOnAwakening').value = entry.movedOnAwakening;
+            formState.movedOnAwakening = entry.movedOnAwakening;
             document.getElementById('notes').value = entry.notes;
+
+            updateToggleButtons();
 
             document.getElementById('formContainer').style.display = 'block';
             document.getElementById('buttonContainer').style.display = 'none';
@@ -237,7 +329,7 @@
 
         function deleteEntry(id) {
             if (!confirm('Delete this entry?')) return;
-            entries = entries.filter(e => e.id !== id);
+            entries = entries.filter(function(e) { return e.id !== id; });
             saveToStorage();
             loadEntries();
         }
@@ -253,34 +345,41 @@
             }
 
             emptyState.style.display = 'none';
-            tbody.innerHTML = entries.map(entry => `
-                <tr class="hover:bg-slate-750">
-                    <td class="p-3 text-cyan-400 font-medium whitespace-nowrap">
-                        ${entry.date.split('-')[1]}/${entry.date.split('-')[2]}/${entry.date.split('-')[0]}
-                    </td>
-                    <td class="p-3">${entry.intentSet}</td>
-                    <td class="p-3 text-purple-400">${entry.practicedSUM || '-'}</td>
-                    <td class="p-3 text-blue-400">${entry.focusedDuration || '-'}</td>
-                    <td class="p-3">${entry.glassOfWater}</td>
-                    <td class="p-3 text-yellow-400">${entry.awakenings || '-'}</td>
-                    <td class="p-3">${entry.movedOnAwakening}</td>
-                    <td class="p-3 text-slate-400 max-w-xs truncate">${entry.notes || '-'}</td>
-                    <td class="p-3">
-                        <div class="flex gap-2 justify-end whitespace-nowrap">
-                            <button onclick="editEntry('${entry.id}')" class="text-blue-400 hover:text-blue-300 p-1 hover:bg-slate-700 rounded" title="Edit entry">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                            </button>
-                            <button onclick="deleteEntry('${entry.id}')" class="text-red-400 hover:text-red-300 p-1 hover:bg-slate-700 rounded" title="Delete entry">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            var html = '';
+            for (var i = 0; i < entries.length; i++) {
+                var entry = entries[i];
+                var dateParts = entry.date.split('-');
+                var formattedDate = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
+                
+                var focusedDisplay = entry.focusedDuration ? entry.focusedDuration + ' ' + (entry.focusedDurationUnit || 'mins') : '-';
+                var sumDisplay = entry.practicedSUM ? entry.practicedSUM + ' ' + (entry.practicedSUMUnit || 'mins') : '-';
+                
+                html += '<tr class="hover:bg-slate-750">';
+                html += '<td class="p-3 text-cyan-400 font-medium whitespace-nowrap">' + formattedDate + '</td>';
+                html += '<td class="p-3">' + entry.intentSet + '</td>';
+                html += '<td class="p-3 text-purple-400">' + sumDisplay + '</td>';
+                html += '<td class="p-3 text-blue-400">' + focusedDisplay + '</td>';
+                html += '<td class="p-3">' + entry.glassOfWater + '</td>';
+                html += '<td class="p-3 text-yellow-400">' + (entry.awakenings || '-') + '</td>';
+                html += '<td class="p-3">' + entry.movedOnAwakening + '</td>';
+                html += '<td class="p-3 text-slate-400 max-w-xs truncate">' + (entry.notes || '-') + '</td>';
+                html += '<td class="p-3">';
+                html += '<div class="flex gap-2 justify-end whitespace-nowrap">';
+                html += '<button onclick="editEntry(\'' + entry.id + '\')" class="text-blue-400 hover:text-blue-300 p-1 hover:bg-slate-700 rounded" title="Edit entry">';
+                html += '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
+                html += '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>';
+                html += '</svg>';
+                html += '</button>';
+                html += '<button onclick="deleteEntry(\'' + entry.id + '\')" class="text-red-400 hover:text-red-300 p-1 hover:bg-slate-700 rounded" title="Delete entry">';
+                html += '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
+                html += '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
+                html += '</svg>';
+                html += '</button>';
+                html += '</div>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
         }
 
         function renderStats() {
@@ -292,44 +391,67 @@
 
             statsDiv.style.display = 'grid';
 
-            const intentSetYes = entries.filter(e => e.intentSet === 'Yes').length;
-            const avgSUM = entries.filter(e => e.practicedSUM).reduce((sum, e) => {
-                const mins = parseInt(e.practicedSUM.replace(/\D/g, '')) || 0;
-                return sum + mins;
-            }, 0) / entries.filter(e => e.practicedSUM).length || 0;
-            const avgFocused = entries.filter(e => e.focusedDuration).reduce((sum, e) => {
-                const mins = parseInt(e.focusedDuration.replace(/\D/g, '')) || 0;
-                return sum + mins;
-            }, 0) / entries.filter(e => e.focusedDuration).length || 0;
-            const avgAwakenings = entries.filter(e => e.awakenings).reduce((sum, e) => sum + parseInt(e.awakenings || 0), 0) / entries.filter(e => e.awakenings).length || 0;
-            const movedNo = entries.filter(e => e.movedOnAwakening === 'no').length;
+            const intentSetYes = entries.filter(function(e) { return e.intentSet === 'Yes'; }).length;
+            
+            let sumTotal = 0;
+            let sumCount = 0;
+            entries.forEach(function(e) {
+                if (e.practicedSUM) {
+                    const mins = parseInt(e.practicedSUM.replace(/\D/g, '')) || 0;
+                    sumTotal += mins;
+                    sumCount++;
+                }
+            });
+            const avgSUM = sumCount > 0 ? sumTotal / sumCount : 0;
+            
+            let focusTotal = 0;
+            let focusCount = 0;
+            entries.forEach(function(e) {
+                if (e.focusedDuration) {
+                    const mins = parseInt(e.focusedDuration.replace(/\D/g, '')) || 0;
+                    focusTotal += mins;
+                    focusCount++;
+                }
+            });
+            const avgFocused = focusCount > 0 ? focusTotal / focusCount : 0;
+            
+            let awakeningsTotal = 0;
+            let awakeningsCount = 0;
+            entries.forEach(function(e) {
+                if (e.awakenings) {
+                    awakeningsTotal += parseInt(e.awakenings || 0);
+                    awakeningsCount++;
+                }
+            });
+            const avgAwakenings = awakeningsCount > 0 ? awakeningsTotal / awakeningsCount : 0;
+            
+            const movedNo = entries.filter(function(e) { return e.movedOnAwakening === 'no'; }).length;
 
-            statsDiv.innerHTML = `
-                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-cyan-400">${entries.length}</div>
-                    <div class="text-xs text-slate-400">Total Sessions</div>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-green-400">${Math.round((intentSetYes / entries.length) * 100)}%</div>
-                    <div class="text-xs text-slate-400">Intent Set</div>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-purple-400">${avgSUM.toFixed(0)}m</div>
-                    <div class="text-xs text-slate-400">Avg SUM</div>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-blue-400">${avgFocused.toFixed(0)}m</div>
-                    <div class="text-xs text-slate-400">Avg Focus</div>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-yellow-400">${avgAwakenings.toFixed(1)}</div>
-                    <div class="text-xs text-slate-400">Avg Wake-ups</div>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-orange-400">${movedNo}</div>
-                    <div class="text-xs text-slate-400">Still on Wake</div>
-                </div>
-            `;
+            statsDiv.innerHTML =
+                '<div class="bg-slate-800 border border-slate-700 rounded-lg p-4">' +
+                    '<div class="text-2xl font-bold text-cyan-400">' + entries.length + '</div>' +
+                    '<div class="text-xs text-slate-400">Total Sessions</div>' +
+                '</div>' +
+                '<div class="bg-slate-800 border border-slate-700 rounded-lg p-4">' +
+                    '<div class="text-2xl font-bold text-green-400">' + Math.round((intentSetYes / entries.length) * 100) + '%</div>' +
+                    '<div class="text-xs text-slate-400">Intent Set</div>' +
+                '</div>' +
+                '<div class="bg-slate-800 border border-slate-700 rounded-lg p-4">' +
+                    '<div class="text-2xl font-bold text-purple-400">' + avgSUM.toFixed(0) + 'm</div>' +
+                    '<div class="text-xs text-slate-400">Avg SUM</div>' +
+                '</div>' +
+                '<div class="bg-slate-800 border border-slate-700 rounded-lg p-4">' +
+                    '<div class="text-2xl font-bold text-blue-400">' + avgFocused.toFixed(0) + 'm</div>' +
+                    '<div class="text-xs text-slate-400">Avg Focus</div>' +
+                '</div>' +
+                '<div class="bg-slate-800 border border-slate-700 rounded-lg p-4">' +
+                    '<div class="text-2xl font-bold text-yellow-400">' + avgAwakenings.toFixed(1) + '</div>' +
+                    '<div class="text-xs text-slate-400">Avg Wake-ups</div>' +
+                '</div>' +
+                '<div class="bg-slate-800 border border-slate-700 rounded-lg p-4">' +
+                    '<div class="text-2xl font-bold text-orange-400">' + movedNo + '</div>' +
+                    '<div class="text-xs text-slate-400">Still on Wake</div>' +
+                '</div>';
         }
 
         function downloadData() {
@@ -338,7 +460,7 @@
             const url = URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `ap-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.download = 'ap-tracker-backup-' + new Date().toISOString().split('T')[0] + '.json';
             link.click();
             URL.revokeObjectURL(url);
         }
@@ -348,7 +470,7 @@
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = function(event) {
                 try {
                     const importedEntries = JSON.parse(event.target.result);
                     
@@ -360,7 +482,7 @@
                     entries = importedEntries;
                     saveToStorage();
                     loadEntries();
-                    alert(`Successfully imported ${importedEntries.length} entries!`);
+                    alert('Successfully imported ' + importedEntries.length + ' entries!');
                 } catch (error) {
                     console.error('Error importing data:', error);
                     alert('Failed to import data. Please check the file format.');
